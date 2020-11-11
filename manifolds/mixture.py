@@ -23,7 +23,7 @@ class Mixture(Manifold):
         self.Euclidean = Euclidean()
         self.Poincare = PoincareBall()
 
-        self.Split = []
+        self.Split = [5,5,5]
 
     def minkowski_dot(self, x, y, keepdim=True):
         res = torch.sum(x * y, dim=-1) - 2 * x[..., 0] * y[..., 0]
