@@ -123,6 +123,7 @@ class LPModel(BaseModel):
             neg_scores = neg_scores.cpu()
         labels = [1] * pos_scores.shape[0] + [0] * neg_scores.shape[0]
         preds = list(pos_scores.data.numpy()) + list(neg_scores.data.numpy())
+        print(labels.shape, preds.shape)
         roc = roc_auc_score(labels, preds)
         ap = average_precision_score(labels, preds)
         metrics = {'loss': loss, 'roc': roc, 'ap': ap}
