@@ -7,7 +7,7 @@ We use their implementation of Hyperbolic Graph Convolutions [[1]](http://web.st
 
 See examples in [this Colab](https://colab.research.google.com/drive/1BGm__vnNnfMB2k6nxtao8mHWrul4t43G?usp=sharing).
 
-This is also a class project for [CS468](https://cs468.stanford.edu) at Stanford.
+This is also a class project for [CS468](http://graphics.stanford.edu/courses/cs468-20-fall/) at Stanford.
 
 
 
