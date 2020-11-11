@@ -194,9 +194,9 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
         model.eval()
         best_emb = model.encode(data['features'], data['adj_train_norm'])
         best_test_metrics = model.compute_metrics(best_emb, data, 'test')
-    history["test_loss"] += [best_test_metrics["loss"].item()]
-    history["test_roc"] += [best_test_metrics["roc"]]
-    history["test_ap"] += [best_test_metrics["ap"]]
+    history["test_loss"] = best_test_metrics["loss"].item()
+    history["test_roc"] = best_test_metrics["roc"]
+    history["test_ap"] = best_test_metrics["ap"]
     logging.info(" ".join(["Val set results:", format_metrics(best_val_metrics, 'val')]))
     logging.info(" ".join(["Test set results:", format_metrics(best_test_metrics, 'test')]))
     if args.save:
