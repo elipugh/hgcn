@@ -111,6 +111,10 @@ class Mixture(Manifold):
         poin = self.Poincare.ptransp0(x[..., self.Split[1] : self.Split[2]], u[..., self.Split[1] : self.Split[2]], c)
         return torch.cat([hyper, euc, poin], dim = 1)
 
+
+    def normalize(self, p):
+        return torch.cat([p[...,:self.Split[0]], self.Euclidean.normalize(p[...,self.Split[0]:self.Split[1]]), p[...,self.Split[1]:self.Split[2]]], dim=1)
+
     # def to_poincare(self, x, c):
     #     K = 1. / c
     #     sqrtK = K ** 0.5
