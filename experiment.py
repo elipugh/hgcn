@@ -49,7 +49,7 @@ def get_args(model, manifold, dim, dataset, log_freq,
     parser = argparse.ArgumentParser()
     for _, config_dict in cfg.items():
         parser = add_flags_from_config(parser, config_dict)
-    args = parser.parse_args()
+    args = parser.parse_args([])
 
     return args
 
@@ -189,6 +189,4 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
         json.dump(vars(args), open(os.path.join(save_dir, 'config.json'), 'w'))
         torch.save(model.state_dict(), os.path.join(save_dir, 'model.pth'))
         logging.info(f"Saved model in {save_dir}")
-
-run_experiment("HGCN", "PoincareBall", 16)
 
