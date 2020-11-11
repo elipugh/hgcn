@@ -23,7 +23,7 @@ class Mixture(Manifold):
         self.Euclidean = Euclidean()
         self.Poincare = PoincareBall()
 
-        self.Split = [500,1000,1434]
+        self.Split = [45,90,128]
 
     def sqdist(self, x, y, c):
         hyper = self.Hyperboloid.sqdist(x[..., :self.Split[0]], y[..., :self.Split[0]], c)
