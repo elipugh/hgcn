@@ -29,13 +29,13 @@ class BaseModel(nn.Module):
         else:
             self.c = nn.Parameter(torch.Tensor([1.]))
         self.manifold = getattr(manifolds, self.manifold_name)()
-        if self.manifold.name == 'Hyperboloid':
+        if (self.manifold.name == 'Hyperboloid') or (self.manifold.name == 'Mixture'):
             args.feat_dim = args.feat_dim + 1
         self.nnodes = args.n_nodes
         self.encoder = getattr(encoders, args.model)(self.c, args)
 
     def encode(self, x, adj):
-        if self.manifold.name == 'Hyperboloid':
+        if (self.manifold.name == 'Hyperboloid') or (self.manifold.name == 'Mixture'):
             o = torch.zeros_like(x)
             x = torch.cat([o[:, 0:1], x], dim=1)
         h = self.encoder.encode(x, adj)
