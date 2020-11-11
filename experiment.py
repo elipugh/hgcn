@@ -110,7 +110,7 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
 
     # Model and optimizer
     model = Model(args)
-    logging.info(str(model))
+    # logging.info(str(model))
     optimizer = getattr(optimizers, args.optimizer)(params=model.parameters(), lr=args.lr,
                                                     weight_decay=args.weight_decay)
     lr_scheduler = torch.optim.lr_scheduler.StepLR(
@@ -132,12 +132,23 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
     best_val_metrics = model.init_metric_dict()
     best_test_metrics = None
     best_emb = None
+    history = {"train_loss":[],
+               "train_roc":[],
+               "train_ap":[],
+               "val_loss":[],
+               "val_roc":[],
+               "val_ap":[],
+               "train_ap":[],
+               "eval_freq":eval_freq}
     for epoch in range(args.epochs):
         t = time.time()
         model.train()
         optimizer.zero_grad()
         embeddings = model.encode(data['features'], data['adj_train_norm'])
         train_metrics = model.compute_metrics(embeddings, data, 'train')
+        history["train_loss"] += [train_metrics["train_loss"]]
+        history["train_roc"] += [train_metrics["train_roc"]]
+        history["train_ap"] += [train_metrics["train_ap"]]
         train_metrics['loss'].backward()
         if args.grad_clip is not None:
             max_norm = float(args.grad_clip)
@@ -156,6 +167,9 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
             model.eval()
             embeddings = model.encode(data['features'], data['adj_train_norm'])
             val_metrics = model.compute_metrics(embeddings, data, 'val')
+            history["val_loss"] += [val_metrics["val_loss"]]
+            history["val_roc"] += [val_metrics["val_roc"]]
+            history["val_ap"] += [val_metrics["val_ap"]]
             if (epoch + 1) % args.log_freq == 0:
                 logging.info(" ".join(['Epoch: {:04d}'.format(epoch + 1), format_metrics(val_metrics, 'val')]))
             if model.has_improved(best_val_metrics, val_metrics):
@@ -168,7 +182,7 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
             else:
                 counter += 1
                 if counter == args.patience and epoch > args.min_epochs:
-                    logging.info("Early stopping")
+                    logging.info("Early stopping after {epoch} epochs.")
                     break
 
     logging.info("Optimization Finished!")
@@ -189,4 +203,5 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
         json.dump(vars(args), open(os.path.join(save_dir, 'config.json'), 'w'))
         torch.save(model.state_dict(), os.path.join(save_dir, 'model.pth'))
         logging.info(f"Saved model in {save_dir}")
+    return history
 
