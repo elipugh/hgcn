@@ -4,7 +4,7 @@ from manifolds.base import Manifold
 from utils.math_utils import arcosh, cosh, sinh
 from manifolds.hyperboloid import Hyperboloid
 from manifolds.euclidean import Euclidean
-from manifolds.poincare import Poincare
+from manifolds.poincare import PoincareBall
 
 
 class Mixture(Manifold):
@@ -21,7 +21,7 @@ class Mixture(Manifold):
         self.max_norm = 1e6
         self.Hyperboloid = Hyperboloid()
         self.Euclidean = Euclidean()
-        self.Poincare = Poincare()
+        self.Poincare = PoincareBall()
 
         self.Split = []
 
