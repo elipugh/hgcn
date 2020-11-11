@@ -139,14 +139,17 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
                "val_roc":[],
                "val_ap":[],
                "train_ap":[],
-               "eval_freq":args.eval_freq}
+               "eval_freq":args.eval_freq,
+               "model":args.model,
+               "dataset":args.dataset,
+               "dim":args.dim}
     for epoch in range(args.epochs):
         t = time.time()
         model.train()
         optimizer.zero_grad()
         embeddings = model.encode(data['features'], data['adj_train_norm'])
         train_metrics = model.compute_metrics(embeddings, data, 'train')
-        history["train_loss"] += [train_metrics["loss"]]
+        history["train_loss"] += [train_metrics["loss"].item()]
         history["train_roc"] += [train_metrics["roc"]]
         history["train_ap"] += [train_metrics["ap"]]
         train_metrics['loss'].backward()
@@ -167,7 +170,7 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
             model.eval()
             embeddings = model.encode(data['features'], data['adj_train_norm'])
             val_metrics = model.compute_metrics(embeddings, data, 'val')
-            history["val_loss"] += [val_metrics["loss"]]
+            history["val_loss"] += [val_metrics["loss"].item()]
             history["val_roc"] += [val_metrics["roc"]]
             history["val_ap"] += [val_metrics["ap"]]
             if (epoch + 1) % args.log_freq == 0:
@@ -182,7 +185,7 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
             else:
                 counter += 1
                 if counter == args.patience and epoch > args.min_epochs:
-                    logging.info("Early stopping after {epoch} epochs.")
+                    logging.info(f"Early stopping after {epoch} epochs.")
                     break
 
     logging.info("Optimization Finished!")
@@ -191,6 +194,9 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
         model.eval()
         best_emb = model.encode(data['features'], data['adj_train_norm'])
         best_test_metrics = model.compute_metrics(best_emb, data, 'test')
+    history["test_loss"] += [best_test_metrics["loss"].item()]
+    history["test_roc"] += [best_test_metrics["roc"]]
+    history["test_ap"] += [best_test_metrics["ap"]]
     logging.info(" ".join(["Val set results:", format_metrics(best_val_metrics, 'val')]))
     logging.info(" ".join(["Test set results:", format_metrics(best_test_metrics, 'test')]))
     if args.save:
