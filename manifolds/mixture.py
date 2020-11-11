@@ -56,6 +56,7 @@ class Mixture(Manifold):
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def proj_tan0(self, u, c):
+        print(u.shape)
         hyper = self.Hyperboloid.proj_tan0(u[..., :self.Split[0]], c)
         euc = self.Euclidean.proj_tan0(u[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.proj_tan0(u[..., self.Split[1] : self.Split[2]], c)
