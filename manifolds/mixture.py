@@ -46,7 +46,6 @@ class Mixture(Manifold):
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def proj_tan0(self, u, c):
-        print(u.shape)
         hyper = self.Hyperboloid.proj_tan0(u[..., :self.Split[0]], c)
         euc = self.Euclidean.proj_tan0(u[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.proj_tan0(u[..., self.Split[1] : self.Split[2]], c)
@@ -79,8 +78,6 @@ class Mixture(Manifold):
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def mobius_add(self, x, y, c):
-        print(x[..., :self.Split[0]].shape, y[..., :self.Split[0]].shape)
-        print(x.shape, y.shape)
         hyper = self.Hyperboloid.mobius_add(x[..., :self.Split[0]], y[..., :self.Split[0]], c)
         euc = self.Euclidean.mobius_add(x[..., self.Split[0] : self.Split[1]], y[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.mobius_add(x[..., self.Split[1] : self.Split[2]], y[..., self.Split[1] : self.Split[2]], c)
