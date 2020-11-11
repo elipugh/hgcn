@@ -25,16 +25,6 @@ class Mixture(Manifold):
 
         self.Split = [500,1000,1434]
 
-    def minkowski_dot(self, x, y, keepdim=True):
-        res = torch.sum(x * y, dim=-1) - 2 * x[..., 0] * y[..., 0]
-        if keepdim:
-            res = res.view(res.shape + (1,))
-        return res
-
-    def minkowski_norm(self, u, keepdim=True):
-        dot = self.minkowski_dot(u, u, keepdim=keepdim)
-        return torch.sqrt(torch.clamp(dot, min=self.eps[u.dtype]))
-
     def sqdist(self, x, y, c):
         hyper = self.Hyperboloid.sqdist(x[..., :self.Split[0]], y[..., :self.Split[0]], c)
         euc = self.Euclidean.sqdist(x[..., self.Split[0] : self.Split[1]], y[..., self.Split[0] : self.Split[1]], c)
@@ -89,6 +79,7 @@ class Mixture(Manifold):
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def mobius_add(self, x, y, c):
+        print(x[..., :self.Split[0]].shape, y[..., :self.Split[0]].shape)
         print(x.shape, y.shape)
         hyper = self.Hyperboloid.mobius_add(x[..., :self.Split[0]], y[..., :self.Split[0]], c)
         euc = self.Euclidean.mobius_add(x[..., self.Split[0] : self.Split[1]], y[..., self.Split[0] : self.Split[1]], c)
