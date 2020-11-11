@@ -1,13 +1,13 @@
 Hyperbolic Graph Convolutional Networks in PyTorch
 ==================================================
 
-This repository is a fork of [https://github.com/HazyResearch/hgcn](https://github.com/HazyResearch/hgcn), and additions/modifications are made by [Eli](github.com/elipugh) and [Chris](https://www.linkedin.com/in/christopher-healy-0780a4178/).
+This repository is a fork of [https://github.com/HazyResearch/hgcn](https://github.com/HazyResearch/hgcn), and additions/modifications are made by [Eli](https://github.com/elipugh) and [Chris](https://www.linkedin.com/in/christopher-healy-0780a4178/).
 
 We use their implementation of Hyperbolic Graph Convolutions [[1]](http://web.stanford.edu/~chami/files/hgcn.pdf) in PyTorch to examine how embedding on different manifolds can impact performance on link prediction and also node classification.
 
 See examples in [this Colab](https://colab.research.google.com/drive/1BGm__vnNnfMB2k6nxtao8mHWrul4t43G?usp=sharing).
 
-This is also a class project for [CS468](cs468.stanford.edu) at Stanford.
+This is also a class project for [CS468](https://cs468.stanford.edu) at Stanford.
 
 
 
