@@ -150,7 +150,8 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
                "model":args.model,
                "dataset":args.dataset,
                "dim":args.dim,
-               "manifold":args.manifold}
+               "manifold":args.manifold,
+               "mix_frac":args.mixed_frac}
     for epoch in range(args.epochs):
         t = time.time()
         model.train()
