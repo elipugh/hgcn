@@ -29,7 +29,7 @@ class BaseModel(nn.Module):
         else:
             self.c = nn.Parameter(torch.Tensor([1.]))
         self.manifold = getattr(manifolds, self.manifold_name)()
-        if (self.manifold.name == 'Hyperboloid') or ((self.manifold.name == 'Mixture') & (self.manifold.Fractions[0] > 0)):
+        if (self.manifold.name == 'Hyperboloid') or ((self.manifold.name == 'Mixture') and (self.manifold.Fractions[0] > 0)):
             args.feat_dim = args.feat_dim + 1
         if (self.manifold.name == 'Mixture'):
             self.manifold.Fractions = args.mixed_frac
@@ -37,7 +37,7 @@ class BaseModel(nn.Module):
         self.encoder = getattr(encoders, args.model)(self.c, args)
 
     def encode(self, x, adj):
-        if (self.manifold.name == 'Hyperboloid') or ((self.manifold.name == 'Mixture') & (self.manifold.Fractions[0] > 0)):
+        if (self.manifold.name == 'Hyperboloid') or ((self.manifold.name == 'Mixture') and (self.manifold.Fractions[0] > 0)):
             o = torch.zeros_like(x)
             x = torch.cat([o[:, 0:1], x], dim=1)
         h = self.encoder.encode(x, adj)
