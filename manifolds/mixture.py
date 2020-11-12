@@ -158,12 +158,14 @@ class Mixture(Manifold):
 
 
     def ptransp(self, x, y, u, c):
+        self.rescale_dims(x)
         hyper = self.Hyperboloid.ptransp(x[..., :self.Split[0]], y[..., :self.Split[0]], u[..., :self.Split[0]], c)
         euc = self.Euclidean.ptransp(x[..., self.Split[0] : self.Split[1]], y[..., self.Split[0] : self.Split[1]], u[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.ptransp(x[..., self.Split[1] : self.Split[2]], y[..., self.Split[1] : self.Split[2]], u[..., self.Split[1] : self.Split[2]], c)
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def ptransp0(self, x, u, c):
+        self.rescale_dims(x)
         hyper = self.Hyperboloid.ptransp0(x[..., :self.Split[0]], u[..., :self.Split[0]], c)
         euc = self.Euclidean.ptransp0(x[..., self.Split[0] : self.Split[1]], u[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.ptransp0(x[..., self.Split[1] : self.Split[2]], u[..., self.Split[1] : self.Split[2]], c)
@@ -171,6 +173,7 @@ class Mixture(Manifold):
 
 
     def normalize(self, p):
+        self.rescale_dims(x)
         return torch.cat([p[...,:self.Split[0]], self.Euclidean.normalize(p[...,self.Split[0]:self.Split[1]]), p[...,self.Split[1]:self.Split[2]]], dim=1)
 
     # def to_poincare(self, x, c):
