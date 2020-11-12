@@ -52,11 +52,11 @@ def get_args(model, manifold, dim, dataset, log_freq,
     cfg['data_config']['dataset'] = (dataset,"")
     cfg['data_config']['normalize-feats'] = (float(normalize_feats),"")
 
-    if manifold == "Mixed" and mixed_fractions[0]==1:
+    if manifold == "Mixture" and mixed_fractions[0]==1:
         cfg['model_config']['manifold'] = ("Hyperboloid","")
-    if manifold == "Mixed" and mixed_fractions[1]==1:
+    if manifold == "Mixture" and mixed_fractions[1]==1:
         cfg['model_config']['manifold'] = ("Euclidean","")
-    if manifold == "Mixed" and mixed_fractions[2]==1:
+    if manifold == "Mixture" and mixed_fractions[2]==1:
         cfg['model_config']['manifold'] = ("PoincareBall","")
 
     parser = argparse.ArgumentParser()
