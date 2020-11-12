@@ -111,7 +111,7 @@ class Mixture(Manifold):
         'now unscrew the vector'
 
         'hyperboloid'
-        mu[..., self.Split[0]] = self.Hyperboloid.expmap0(mu[..., self.Split[0]], c)
+        mu[..., self.Split[0]] = self.Hyperboloid.expmap0(mu[..., self.Split[0]].view(-1,1), c)
 
 
         'poincare'
