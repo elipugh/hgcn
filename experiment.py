@@ -66,7 +66,8 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
 
     args = get_args(model, manifold, dim, dataset, log_freq,
                    cuda, lr, n_layers, act, bias, dropout,
-                   weight_decay, c, normalize_feats, task)
+                   weight_decay, c, normalize_feats, task,
+                   mixed_fractions)
 
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
