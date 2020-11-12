@@ -86,9 +86,9 @@ class Mixture(Manifold):
 
     def mobius_matvec(self, m, x, c):
         print(m.shape, x.shape)
-        hyper = self.Hyperboloid.mobius_matvec(m.T[..., :self.Split[0]].T, x[..., :self.Split[0]], c)
-        euc = self.Euclidean.mobius_matvec(m.T[..., self.Split[0] : self.Split[1]].T, x[..., self.Split[0] : self.Split[1]], c)
-        poin = self.Poincare.mobius_matvec(m.T[..., self.Split[1] : self.Split[2]].T, x[..., self.Split[1] : self.Split[2]], c)
+        hyper = self.Hyperboloid.mobius_matvec(m[ :self.Split[0], :].T, x[..., :self.Split[0]], c)
+        euc = self.Euclidean.mobius_matvec(m[ self.Split[0] : self.Split[1], :].T, x[..., self.Split[0] : self.Split[1]], c)
+        poin = self.Poincare.mobius_matvec(m[ self.Split[1] : self.Split[2], :].T, x[..., self.Split[1] : self.Split[2]], c)
         
         print(hyper.shape)
         print(euc.shape)
