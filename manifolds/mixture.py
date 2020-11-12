@@ -37,7 +37,7 @@ class Mixture(Manifold):
         print(poin.shape)
         print(total.shape)
         ##sum lol
-        return (hyper**2 + euc**2 + poin**2)**.5
+        return (hyper.view(-1)**2 + euc**2 + poin**2)**.5
 
     def proj(self, x, c):
         hyper = self.Hyperboloid.proj(x[..., :self.Split[0]], c)
