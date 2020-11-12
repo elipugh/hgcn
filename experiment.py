@@ -145,7 +145,8 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
                "dataset":args.dataset,
                "dim":args.dim,
                "manifold":args.manifold,
-               "mix_frac":args.mixed_frac}
+               "mix_frac":args.mixed_frac,
+               "task":args.task}
     for s in ["train", "val", "test"]:
         if args.task == "nc":
             for m in ["acc", "f1", "loss"]:
