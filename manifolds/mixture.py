@@ -27,15 +27,10 @@ class Mixture(Manifold):
 
     def sqdist(self, x, y, c):
         
-        print(x.shape, y.shape)
         hyper = self.Hyperboloid.sqdist(x[..., :self.Split[0]], y[..., :self.Split[0]], c)
         euc = self.Euclidean.sqdist(x[..., self.Split[0] : self.Split[1]], y[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.sqdist(x[..., self.Split[1] : self.Split[2]], x[..., self.Split[1] : self.Split[2]], c)
         total = (hyper**2 + euc**2 + poin**2)**.5
-        print(hyper.shape)
-        print(euc.shape)
-        print(poin.shape)
-        print(total.shape)
         ##sum lol
         return (hyper.view(-1)**2 + euc**2 + poin**2)**.5
 
@@ -90,9 +85,14 @@ class Mixture(Manifold):
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def mobius_matvec(self, m, x, c):
+        print(m.shape, x.shape)
         hyper = self.Hyperboloid.mobius_matvec(m[..., :self.Split[0]], x[..., :self.Split[0]], c)
         euc = self.Euclidean.mobius_matvec(m[..., self.Split[0] : self.Split[1]], x[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.mobius_matvec(m[..., self.Split[1] : self.Split[2]], x[..., self.Split[1] : self.Split[2]], c)
+        
+        print(hyper.shape)
+        print(euc.shape)
+        print(poin.shape)
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def ptransp(self, x, y, u, c):
