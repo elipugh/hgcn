@@ -27,6 +27,12 @@ class Mixture(Manifold):
         self.Split = [0,0,0]
 
     def sqdist(self, x, y, c):
+        if (self.Fractions[1]==0) and (self.Fractions[2]==0):
+            return self.Hyperboloid.sqdist(x, y, c)
+        if (self.Fractions[0]==0) and (self.Fractions[2]==0):
+            return self.Euclidean.sqdist(x, y, c)
+        if (self.Fractions[0]==0) and (self.Fractions[1]==0):
+            return self.Poincare.sqdist(x, y, c)
         self.rescale_dims(x)
         if self.Fractions[0] != 0:
             hyper = self.Hyperboloid.sqdist(x[..., :self.Split[0]], y[..., :self.Split[0]], c)
@@ -42,6 +48,12 @@ class Mixture(Manifold):
         return sum
 
     def proj(self, x, c):
+        if (self.Fractions[1]==0) and (self.Fractions[2]==0):
+            return self.Hyperboloid.proj(x, c)
+        if (self.Fractions[0]==0) and (self.Fractions[2]==0):
+            return self.Euclidean.proj(x, c)
+        if (self.Fractions[0]==0) and (self.Fractions[1]==0):
+            return self.Poincare.proj(x, c)
         self.rescale_dims(x)
         if self.Fractions[0] != 0:
             hyper = self.Hyperboloid.proj(x[..., :self.Split[0]], c)
@@ -58,6 +70,12 @@ class Mixture(Manifold):
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def proj_tan(self, u, x, c):
+        if (self.Fractions[1]==0) and (self.Fractions[2]==0):
+            return self.Hyperboloid.proj_tan(u, x, c)
+        if (self.Fractions[0]==0) and (self.Fractions[2]==0):
+            return self.Euclidean.proj_tan(u, x, c)
+        if (self.Fractions[0]==0) and (self.Fractions[1]==0):
+            return self.Poincare.proj_tan(u, x, c)
         self.rescale_dims(x)
         if self.Fractions[0] != 0:
             hyper = self.Hyperboloid.proj_tan(u[..., :self.Split[0]], x[..., :self.Split[0]], c)
@@ -74,6 +92,12 @@ class Mixture(Manifold):
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def proj_tan0(self, u, c):
+        if (self.Fractions[1]==0) and (self.Fractions[2]==0):
+            return self.Hyperboloid.proj_tan0(u, c)
+        if (self.Fractions[0]==0) and (self.Fractions[2]==0):
+            return self.Euclidean.proj_tan0(u, c)
+        if (self.Fractions[0]==0) and (self.Fractions[1]==0):
+            return self.Poincare.proj_tan0(u, c)
         self.rescale_dims(u)
         if self.Fractions[0] != 0:
             hyper = self.Hyperboloid.proj_tan0(u[..., :self.Split[0]], c)
@@ -90,6 +114,12 @@ class Mixture(Manifold):
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def expmap(self, u, x, c):
+        if (self.Fractions[1]==0) and (self.Fractions[2]==0):
+            return self.Hyperboloid.expmap(u, x, c)
+        if (self.Fractions[0]==0) and (self.Fractions[2]==0):
+            return self.Euclidean.expmap(u, x, c)
+        if (self.Fractions[0]==0) and (self.Fractions[1]==0):
+            return self.Poincare.expmap(u, x, c)
         self.rescale_dims(x)
         if self.Fractions[0] != 0:
             hyper = self.Hyperboloid.expmap(u[..., :self.Split[0]], x[..., :self.Split[0]], c)
@@ -107,6 +137,12 @@ class Mixture(Manifold):
 
 
     def logmap(self, x, y, c):
+        if (self.Fractions[1]==0) and (self.Fractions[2]==0):
+            return self.Hyperboloid.logmap(x, y, c)
+        if (self.Fractions[0]==0) and (self.Fractions[2]==0):
+            return self.Euclidean.logmap(x, y, c)
+        if (self.Fractions[0]==0) and (self.Fractions[1]==0):
+            return self.Poincare.logmap(x, y, c)
         self.rescale_dims(x)
         if self.Fractions[0] != 0:
             hyper = self.Hyperboloid.logmap(x[..., :self.Split[0]], y[..., :self.Split[0]], c)
@@ -123,6 +159,12 @@ class Mixture(Manifold):
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def expmap0(self, u, c):
+        if (self.Fractions[1]==0) and (self.Fractions[2]==0):
+            return self.Hyperboloid.expmap0(u, c)
+        if (self.Fractions[0]==0) and (self.Fractions[2]==0):
+            return self.Euclidean.expmap0(u, c)
+        if (self.Fractions[0]==0) and (self.Fractions[1]==0):
+            return self.Poincare.expmap0(u, c)
         self.rescale_dims(u)
         if self.Fractions[0] != 0:
             hyper = self.Hyperboloid.expmap0(u[..., :self.Split[0]], c)
@@ -139,6 +181,12 @@ class Mixture(Manifold):
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def logmap0(self, x, c):
+        if (self.Fractions[1]==0) and (self.Fractions[2]==0):
+            return self.Hyperboloid.logmap0(x, c)
+        if (self.Fractions[0]==0) and (self.Fractions[2]==0):
+            return self.Euclidean.logmap0(x, c)
+        if (self.Fractions[0]==0) and (self.Fractions[1]==0):
+            return self.Poincare.logmap0(x, c)
         self.rescale_dims(x)
         if self.Fractions[0] != 0:
             hyper = self.Hyperboloid.logmap0(x[..., :self.Split[0]], c)
@@ -155,6 +203,12 @@ class Mixture(Manifold):
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def mobius_add(self, x, y, c):
+        if (self.Fractions[1]==0) and (self.Fractions[2]==0):
+            return self.Hyperboloid.mobius_add(x, y, c)
+        if (self.Fractions[0]==0) and (self.Fractions[2]==0):
+            return self.Euclidean.mobius_add(x, y, c)
+        if (self.Fractions[0]==0) and (self.Fractions[1]==0):
+            return self.Poincare.mobius_add(x, y, c)
         self.rescale_dims(x)
         if self.Fractions[0] != 0:
             hyper = self.Hyperboloid.mobius_add(x[..., :self.Split[0]], y[..., :self.Split[0]], c)
@@ -171,6 +225,13 @@ class Mixture(Manifold):
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def mobius_matvec(self, m, x, c):
+        if (self.Fractions[1]==0) and (self.Fractions[2]==0):
+            return self.Hyperboloid.mobius_matvec(m, x, c)
+        if (self.Fractions[0]==0) and (self.Fractions[2]==0):
+            return self.Euclidean.mobius_matvec(m, x, c)
+        if (self.Fractions[0]==0) and (self.Fractions[1]==0):
+            return self.Poincare.mobius_matvec(m, x, c)
+
         self.rescale_dims(x)
         'Seperate out Manifolds, project:'
 
@@ -241,6 +302,12 @@ class Mixture(Manifold):
 
 
     def ptransp(self, x, y, u, c):
+        if (self.Fractions[1]==0) and (self.Fractions[2]==0):
+            return self.Hyperboloid.ptransp(x, y, u, c)
+        if (self.Fractions[0]==0) and (self.Fractions[2]==0):
+            return self.Euclidean.ptransp(x, y, u, c)
+        if (self.Fractions[0]==0) and (self.Fractions[1]==0):
+            return self.Poincare.ptransp(x, y, u, c)
         self.rescale_dims(x)
         if self.Fractions[0] != 0:
             hyper = self.Hyperboloid.ptransp(x[..., :self.Split[0]], y[..., :self.Split[0]], u[..., :self.Split[0]], c)
@@ -257,6 +324,12 @@ class Mixture(Manifold):
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def ptransp0(self, x, u, c):
+        if (self.Fractions[1]==0) and (self.Fractions[2]==0):
+            return self.Hyperboloid.ptransp0(x, u, c)
+        if (self.Fractions[0]==0) and (self.Fractions[2]==0):
+            return self.Euclidean.ptransp0(x, u, c)
+        if (self.Fractions[0]==0) and (self.Fractions[1]==0):
+            return self.Poincare.ptransp0(x, u, c)
         self.rescale_dims(x)
         if self.Fractions[0] != 0:
             hyper = self.Hyperboloid.ptransp0(x[..., :self.Split[0]], u[..., :self.Split[0]], c)
@@ -274,6 +347,8 @@ class Mixture(Manifold):
 
 
     def normalize(self, p):
+        if (self.Fractions[0]==0) and (self.Fractions[2]==0):
+            return self.Euclidean.normalize(p)
         self.rescale_dims(p)
         if self.Fractions[0] != 0:
             hyper = p[...,:self.Split[0]]
