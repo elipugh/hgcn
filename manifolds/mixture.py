@@ -26,10 +26,13 @@ class Mixture(Manifold):
         self.Split = [45,90,128]
 
     def sqdist(self, x, y, c):
+        
+        print(x.shape, y.shape)
         hyper = self.Hyperboloid.sqdist(x[..., :self.Split[0]], y[..., :self.Split[0]], c)
         euc = self.Euclidean.sqdist(x[..., self.Split[0] : self.Split[1]], y[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.sqdist(x[..., self.Split[1] : self.Split[2]], x[..., self.Split[1] : self.Split[2]], c)
-
+        total = (hyper**2 + euc**2 + poin**2)**.5
+        print(total.shape)
         ##sum lol
         return (hyper**2 + euc**2 + poin**2)**.5
 
