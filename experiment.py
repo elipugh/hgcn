@@ -93,6 +93,11 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
                                 logging.StreamHandler()
                             ])
 
+    logging.info(f"\n{args.model}\t{args.manifold}\t{args.task}\t{args.dataset}")
+    logging.info(f"Dim:{args.dim}  lr:{args.lr}  decay:{args.lr_reduce_freq}")
+    if args.manifold == "Mided":
+        m = args.mixed_frac
+        logging.info(f"Hyperboloid:{m[0]:.2f}%  Euclidean:{m[1]:.2f}%  PoincareBall:{m[2]:.2f}%")
     logging.info(f'Using: {args.device}')
     logging.info("Using seed {}.".format(args.seed))
 
