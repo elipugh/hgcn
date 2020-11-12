@@ -144,8 +144,8 @@ class Mixture(Manifold):
     def rescale_dims(self, x):
         length = len(x[0,:])
         if length != self.length:
-            self.Split[0] = (self.Fractions[0] * length)
-            self.Split[1] = (self.Fractions[1] * length) + self.Split[0]
+            self.Split[0] = int(self.Fractions[0] * length)
+            self.Split[1] = int(self.Fractions[1] * length) + self.Split[0]
             self.Split[2] = length
             self.length = length
 
