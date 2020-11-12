@@ -101,7 +101,7 @@ class Mixture(Manifold):
         hyper_u = self.Hyperboloid.logmap0(x[..., :self.Split[0]], c)
 
         'accumulate'
-        accumulated_u = torch.cat([hyperu, x[..., self.Split[0] : self.Split[2]]], dim=1)
+        accumulated_u = torch.cat([hyper_u, x[..., self.Split[0] : self.Split[2]]], dim=1)
 
         'multiply'
         mu = accumulated_u @ m.transpose(-1, -2)
