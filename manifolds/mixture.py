@@ -1,7 +1,7 @@
 import torch
 
 from manifolds.base import Manifold
-from utils.math_utils import arcosh, cosh, sinh
+from utils.math_utils import arcosh, cosh, sinh, artanh, tanh
 from manifolds.hyperboloid import Hyperboloid
 from manifolds.euclidean import Euclidean
 from manifolds.poincare import PoincareBall
