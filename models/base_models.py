@@ -37,7 +37,7 @@ class BaseModel(nn.Module):
         self.encoder = getattr(encoders, args.model)(self.c, args)
 
     def encode(self, x, adj):
-        if (self.manifold.name == 'Hyperboloid') or (self.manifold.name == 'Mixture' & (self.manifold.Fractions[0] > 0)):
+        if (self.manifold.name == 'Hyperboloid') or ((self.manifold.name == 'Mixture') & (self.manifold.Fractions[0] > 0)):
             o = torch.zeros_like(x)
             x = torch.cat([o[:, 0:1], x], dim=1)
         h = self.encoder.encode(x, adj)
