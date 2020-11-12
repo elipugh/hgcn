@@ -160,8 +160,12 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
         embeddings = model.encode(data['features'], data['adj_train_norm'])
         train_metrics = model.compute_metrics(embeddings, data, 'train')
         history["train_loss"] += [train_metrics["loss"].item()]
-        history["train_roc"] += [train_metrics["roc"]]
-        history["train_ap"] += [train_metrics["ap"]]
+        if args.task == "lp":
+            history["train_roc"] += [train_metrics["roc"]]
+            history["train_ap"] += [train_metrics["ap"]]
+        if args.task == "nc":
+            history["train_acc"] += [train_metrics["acc"]]
+            history["train_f1"] += [train_metrics["f1"]]
         train_metrics['loss'].backward()
         if args.grad_clip is not None:
             max_norm = float(args.grad_clip)
@@ -181,8 +185,12 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
             embeddings = model.encode(data['features'], data['adj_train_norm'])
             val_metrics = model.compute_metrics(embeddings, data, 'val')
             history["val_loss"] += [val_metrics["loss"].item()]
-            history["val_roc"] += [val_metrics["roc"]]
-            history["val_ap"] += [val_metrics["ap"]]
+            if args.task == "lp":
+                history["val_roc"] += [val_metrics["roc"]]
+                history["val_ap"] += [val_metrics["ap"]]
+            if args.task == "nc":
+                history["val_acc"] += [val_metrics["acc"]]
+                history["val_f1"] += [val_metrics["f1"]]
             if (epoch + 1) % args.log_freq == 0:
                 logging.info(" ".join(['Epoch: {:04d}'.format(epoch + 1), format_metrics(val_metrics, 'val')]))
             if model.has_improved(best_val_metrics, val_metrics):
@@ -205,8 +213,12 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
         best_emb = model.encode(data['features'], data['adj_train_norm'])
         best_test_metrics = model.compute_metrics(best_emb, data, 'test')
     history["test_loss"] = best_test_metrics["loss"].item()
-    history["test_roc"] = best_test_metrics["roc"]
-    history["test_ap"] = best_test_metrics["ap"]
+    if args.task == "lp":
+        history["test_roc"] = best_test_metrics["roc"]
+        history["test_ap"] = best_test_metrics["ap"]
+    if args.task == "nc":
+        history["test_acc"] = best_test_metrics["acc"]
+        history["test_f1"] = best_test_metrics["f1"]
     logging.info(" ".join(["Val set results:", format_metrics(best_val_metrics, 'val')]))
     logging.info(" ".join(["Test set results:", format_metrics(best_test_metrics, 'test')]))
     if args.save:
