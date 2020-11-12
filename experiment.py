@@ -140,19 +140,19 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
     best_val_metrics = model.init_metric_dict()
     best_test_metrics = None
     best_emb = None
-    history = {"train_loss":[],
-               "train_roc":[],
-               "train_ap":[],
-               "val_loss":[],
-               "val_roc":[],
-               "val_ap":[],
-               "train_ap":[],
-               "eval_freq":args.eval_freq,
+    history = {"eval_freq":args.eval_freq,
                "model":args.model,
                "dataset":args.dataset,
                "dim":args.dim,
                "manifold":args.manifold,
                "mix_frac":args.mixed_frac}
+    for s in ["train", "val", "test"]:
+        if args.task == "nc":
+            for m in ["acc", "f1", "loss"]:
+                history[s+"_"+m] = []
+        elif args.task == "lp":
+            for m in ["roc", "ap", "loss"]:
+                history[s+"_"+m] = []
     for epoch in range(args.epochs):
         t = time.time()
         model.train()
