@@ -173,7 +173,7 @@ class Mixture(Manifold):
 
 
     def normalize(self, p):
-        self.rescale_dims(x)
+        self.rescale_dims(p)
         return torch.cat([p[...,:self.Split[0]], self.Euclidean.normalize(p[...,self.Split[0]:self.Split[1]]), p[...,self.Split[1]:self.Split[2]]], dim=1)
 
     # def to_poincare(self, x, c):
