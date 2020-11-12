@@ -25,7 +25,8 @@ from copy import deepcopy
 
 def get_args(model, manifold, dim, dataset, log_freq,
              cuda, lr, n_layers, act, bias, dropout,
-             weight_decay, c, normalize_feats, task):
+             weight_decay, c, normalize_feats, task,
+             mixed_fractions):
     cfg = deepcopy(config_args)
 
     cfg['model_config']['model'] = (model,"")
@@ -34,6 +35,7 @@ def get_args(model, manifold, dim, dataset, log_freq,
     cfg['model_config']['num-layers'] = (n_layers,"")
     cfg['model_config']['act'] = (act,"")
     cfg['model_config']['bias'] = (bias,"")
+    cfg['model_config']['mixed_frac'] = (mixed_fractions, "")
     if c is not None:
         cfg['model_config']['c'] = (float(c),"")
     else:
@@ -59,7 +61,8 @@ def get_args(model, manifold, dim, dataset, log_freq,
 
 def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
                    lr=0.01, n_layers=2, act="relu", bias=1, dropout=0.5,
-                   weight_decay=0.001, c=None, normalize_feats=1, task="lp"):
+                   weight_decay=0.001, c=None, normalize_feats=1, task="lp",
+                   mixed_fractions=[1/3,1/3,1/3]):
 
     args = get_args(model, manifold, dim, dataset, log_freq,
                    cuda, lr, n_layers, act, bias, dropout,

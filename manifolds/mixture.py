@@ -24,8 +24,7 @@ class Mixture(Manifold):
         self.Poincare = PoincareBall()
         self.length = None
         self.Fractions = [1/3,1/3,1/3]
-
-        self.Split = [45,90,128]
+        self.Split = [0,0,0]
 
     def sqdist(self, x, y, c):
         self.rescale_dims(x)

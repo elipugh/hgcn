@@ -31,6 +31,8 @@ class BaseModel(nn.Module):
         self.manifold = getattr(manifolds, self.manifold_name)()
         if (self.manifold.name == 'Hyperboloid') or (self.manifold.name == 'Mixture'):
             args.feat_dim = args.feat_dim + 1
+        if (self.manifold.name == 'Mixture'):
+            self.manifold.Fractions = args.mixed_fractions
         self.nnodes = args.n_nodes
         self.encoder = getattr(encoders, args.model)(self.c, args)
 
