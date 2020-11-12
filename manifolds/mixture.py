@@ -22,7 +22,7 @@ class Mixture(Manifold):
         self.Hyperboloid = Hyperboloid()
         self.Euclidean = Euclidean()
         self.Poincare = PoincareBall()
-
+        self.length = None
         self.Fractions = [1/3,1/3,1/3]
 
         self.Split = [45,90,128]
