@@ -112,7 +112,7 @@ class Mixture(Manifold):
 
         'hyperboloid'
         print(mu[..., :self.Split[0]].shape)
-        mu[..., self.Split[0]] = self.Hyperboloid.expmap0(mu[..., :self.Split[0]].view(-1,1), c)
+        mu[..., self.Split[0]] = self.Hyperboloid.expmap0(mu[..., :self.Split[0]], c)
 
 
         'poincare'
