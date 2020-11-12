@@ -32,7 +32,7 @@ class Mixture(Manifold):
         poin = self.Poincare.sqdist(x[..., self.Split[1] : self.Split[2]], x[..., self.Split[1] : self.Split[2]], c)
         total = (hyper**2 + euc**2 + poin**2)**.5
         ##sum lol
-        return (hyper.view(-1)**2 + euc**2 + poin**2)**.5
+        return hyper.view(-1) + euc + poin
 
     def proj(self, x, c):
         hyper = self.Hyperboloid.proj(x[..., :self.Split[0]], c)
