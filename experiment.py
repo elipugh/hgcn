@@ -97,7 +97,7 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
     logging.info(f"Dim:{args.dim}  lr:{args.lr}  decay:{args.lr_reduce_freq}")
     if args.manifold == "Mixture":
         m = args.mixed_frac
-        logging.info(f"Hyperboloid:{m[0]:.2f}%  Euclidean:{m[1]:.2f}%  PoincareBall:{m[2]:.2f}%")
+        logging.info(f"Hyperboloid:{100*m[0]:.1f}%  Euclidean:{100*m[1]:.1f}%  PoincareBall:{100*m[2]:.1f}%")
     logging.info(f'Using: {args.device}')
     logging.info("Using seed {}.".format(args.seed))
 
