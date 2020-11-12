@@ -111,6 +111,7 @@ class Mixture(Manifold):
         'now unscrew the vector'
 
         'hyperboloid'
+        print(mu[..., self.Split[0]].shape)
         mu[..., self.Split[0]] = self.Hyperboloid.expmap0(mu[..., self.Split[0]].view(-1,1), c)
 
 
