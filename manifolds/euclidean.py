@@ -48,6 +48,7 @@ class Euclidean(Manifold):
         return x + y
 
     def mobius_matvec(self, m, x, c):
+        print(m.shape, x.shape)
         mx = x @ m.transpose(-1, -2)
         return mx
 
