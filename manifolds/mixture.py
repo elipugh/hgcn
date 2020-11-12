@@ -125,7 +125,7 @@ class Mixture(Manifold):
         res_0 = torch.zeros(1, dtype=res_c.dtype, device=res_c.device)
         poincare_final = torch.where(cond, res_0, res_c)
 
-        new_mu = torch.cat([hyper_final, mu[self.Split[0] : self.Split[1]], poincare_final], dim=1)
+        new_mu = torch.cat([hyper_final, mu[...,self.Split[0] : self.Split[1]], poincare_final], dim=1)
 
         return new_mu
 
