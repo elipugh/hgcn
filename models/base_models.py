@@ -29,13 +29,13 @@ class BaseModel(nn.Module):
         else:
             self.c = nn.Parameter(torch.Tensor([1.]))
         self.manifold = getattr(manifolds, self.manifold_name)()
-        if self.manifold.name == 'Hyperboloid':
+        if (self.manifold.name == 'Hyperboloid') or (self.manifold.name == 'Mixture'):
             args.feat_dim = args.feat_dim + 1
         self.nnodes = args.n_nodes
         self.encoder = getattr(encoders, args.model)(self.c, args)
 
     def encode(self, x, adj):
-        if self.manifold.name == 'Hyperboloid':
+        if (self.manifold.name == 'Hyperboloid') or (self.manifold.name == 'Mixture'):
             o = torch.zeros_like(x)
             x = torch.cat([o[:, 0:1], x], dim=1)
         h = self.encoder.encode(x, adj)
@@ -101,7 +101,7 @@ class LPModel(BaseModel):
         self.nb_edges = args.nb_edges
 
     def decode(self, h, idx):
-        if self.manifold_name == 'Euclidean':
+        if (self.manifold_name == 'Euclidean') or (self.manifold_name == 'Mixture'):
             h = self.manifold.normalize(h)
         emb_in = h[idx[:, 0], :]
         emb_out = h[idx[:, 1], :]
@@ -123,6 +123,7 @@ class LPModel(BaseModel):
             neg_scores = neg_scores.cpu()
         labels = [1] * pos_scores.shape[0] + [0] * neg_scores.shape[0]
         preds = list(pos_scores.data.numpy()) + list(neg_scores.data.numpy())
+        print(len(labels), labels[0], sum(labels)/len(labels), len(preds), len(preds[0]))
         roc = roc_auc_score(labels, preds)
         ap = average_precision_score(labels, preds)
         metrics = {'loss': loss, 'roc': roc, 'ap': ap}
