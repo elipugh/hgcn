@@ -35,7 +35,14 @@ def get_args(model, manifold, dim, dataset, log_freq,
     cfg['model_config']['num-layers'] = (n_layers,"")
     cfg['model_config']['act'] = (act,"")
     cfg['model_config']['bias'] = (bias,"")
-    cfg['model_config']['mixed_frac'] = (mixed_fractions, "")
+    if manifold == "Hyperboloid":
+        cfg['model_config']['mixed_frac'] = ([1,0,0], "")
+    if manifold == "Euclidean":
+        cfg['model_config']['mixed_frac'] = ([0,1,0], "")
+    if manifold == "PoincareBall":
+        cfg['model_config']['mixed_frac'] = ([0,0,1], "")
+    else:
+        cfg['model_config']['mixed_frac'] = (mixed_fractions, "")
     if c is not None:
         cfg['model_config']['c'] = (float(c),"")
     else:
@@ -71,7 +78,6 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
                    lr=0.01, n_layers=2, act="relu", bias=1, dropout=0.5,
                    weight_decay=0.001, c=None, normalize_feats=1, task="lp",
                    mixed_fractions=[1/3,1/3,1/3], lr_reduce_freq=None):
-
     args = get_args(model, manifold, dim, dataset, log_freq,
                    cuda, lr, n_layers, act, bias, dropout,
                    weight_decay, c, normalize_feats, task,
@@ -99,7 +105,6 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
                                 logging.FileHandler(os.path.join(save_dir, 'log.txt')),
                                 logging.StreamHandler()
                             ])
-    print("\n")
     logging.info(f"{args.model}\t{args.manifold}\t{args.task}\t{args.dataset}")
     logging.info(f"Dim:{args.dim}  lr:{args.lr}  decay:{args.lr_reduce_freq}")
     if args.manifold == "Mixture":
@@ -244,5 +249,6 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
         json.dump(vars(args), open(os.path.join(save_dir, 'config.json'), 'w'))
         torch.save(model.state_dict(), os.path.join(save_dir, 'model.pth'))
         logging.info(f"Saved model in {save_dir}")
+    print("\n")
     return history
 
