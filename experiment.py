@@ -34,7 +34,10 @@ def get_args(model, manifold, dim, dataset, log_freq,
     cfg['model_config']['num-layers'] = (n_layers,"")
     cfg['model_config']['act'] = (act,"")
     cfg['model_config']['bias'] = (bias,"")
-    cfg['model_config']['c'] = (float(c),"")
+    if c is not None:
+        cfg['model_config']['c'] = (float(c),"")
+    else:
+        cfg['model_config']['c'] = (c,"")
     cfg['model_config']['task'] = (task,"")
 
     cfg['training_config']['cuda'] = (cuda,"")
