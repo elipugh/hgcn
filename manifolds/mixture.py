@@ -111,8 +111,8 @@ class Mixture(Manifold):
         'now unscrew the vector'
 
         'hyperboloid'
-        print(mu[..., :self.Split[0]].shape)
-        mu[..., :self.Split[0]] = self.Hyperboloid.expmap0(mu[..., :self.Split[0]], c)
+        # print(mu[..., :self.Split[0]].shape)
+        hyper_final = self.Hyperboloid.expmap0(mu[..., :self.Split[0]], c)
 
 
         'poincare'
@@ -123,9 +123,11 @@ class Mixture(Manifold):
         res_c = tanh(poinc_x_norm / poinc_x_norm * artanh(sqrt_c * poinc_x_norm)) * mu[..., self.Split[1] : self.Split[2]] / (poinc_x_norm * sqrt_c)
         cond = (mu[..., self.Split[1] : self.Split[2]] == 0).prod(-1, keepdim=True, dtype=torch.uint8)
         res_0 = torch.zeros(1, dtype=res_c.dtype, device=res_c.device)
-        mu[..., self.Split[1] : self.Split[2]] = torch.where(cond, res_0, res_c)
+        poincare_final = torch.where(cond, res_0, res_c)
 
-        return mu
+        new_mu = torch.cat([hyper_final, mu[self.Split[0] : self.Split[1]], poincare_final], dim=1)
+
+        return new_mu
 
         # mu = u @ m.transpose(-1, -2)
         #
