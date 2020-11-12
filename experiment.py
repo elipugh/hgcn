@@ -52,6 +52,13 @@ def get_args(model, manifold, dim, dataset, log_freq,
     cfg['data_config']['dataset'] = (dataset,"")
     cfg['data_config']['normalize-feats'] = (float(normalize_feats),"")
 
+    manifold == "Mixed" and mixed_fractions[0]==1:
+        cfg['model_config']['manifold'] = ("Hyperboloid","")
+    manifold == "Mixed" and mixed_fractions[1]==1:
+        cfg['model_config']['manifold'] = ("Euclidean","")
+    manifold == "Mixed" and mixed_fractions[2]==1:
+        cfg['model_config']['manifold'] = ("PoincareBall","")
+
     parser = argparse.ArgumentParser()
     for _, config_dict in cfg.items():
         parser = add_flags_from_config(parser, config_dict)
@@ -92,8 +99,8 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
                                 logging.FileHandler(os.path.join(save_dir, 'log.txt')),
                                 logging.StreamHandler()
                             ])
-
-    logging.info(f"\n{args.model}\t{args.manifold}\t{args.task}\t{args.dataset}")
+    print("\n")
+    logging.info(f"{args.model}\t{args.manifold}\t{args.task}\t{args.dataset}")
     logging.info(f"Dim:{args.dim}  lr:{args.lr}  decay:{args.lr_reduce_freq}")
     if args.manifold == "Mixture":
         m = args.mixed_frac
