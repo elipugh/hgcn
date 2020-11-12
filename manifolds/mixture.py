@@ -347,8 +347,12 @@ class Mixture(Manifold):
 
 
     def normalize(self, p):
+        if (self.Fractions[1]==0) and (self.Fractions[2]==0):
+            return p
         if (self.Fractions[0]==0) and (self.Fractions[2]==0):
             return self.Euclidean.normalize(p)
+        if (self.Fractions[0]==0) and (self.Fractions[1]==0):
+            return p
         self.rescale_dims(p)
         if self.Fractions[0] != 0:
             hyper = p[...,:self.Split[0]]
