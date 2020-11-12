@@ -34,17 +34,17 @@ def get_args(model, manifold, dim, dataset, log_freq,
     cfg['model_config']['num-layers'] = (n_layers,"")
     cfg['model_config']['act'] = (act,"")
     cfg['model_config']['bias'] = (bias,"")
-    cfg['model_config']['c'] = (c,"")
+    cfg['model_config']['c'] = (float(c),"")
     cfg['model_config']['task'] = (task,"")
 
     cfg['training_config']['cuda'] = (cuda,"")
     cfg['training_config']['log-freq'] = (log_freq,"")
     cfg['training_config']['lr'] = (lr,"")
-    cfg['training_config']['dropout'] = (dropout,"")
-    cfg['training_config']['weight-decay'] = (weight_decay,"")
+    cfg['training_config']['dropout'] = (float(dropout),"")
+    cfg['training_config']['weight-decay'] = (float(weight_decay),"")
 
     cfg['data_config']['dataset'] = (dataset,"")
-    cfg['data_config']['normalize-feats'] = (normalize_feats,"")
+    cfg['data_config']['normalize-feats'] = (float(normalize_feats),"")
 
     parser = argparse.ArgumentParser()
     for _, config_dict in cfg.items():
