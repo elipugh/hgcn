@@ -22,12 +22,11 @@ class Mixture(Manifold):
         self.Hyperboloid = Hyperboloid()
         self.Euclidean = Euclidean()
         self.Poincare = PoincareBall()
-        self.length = None
         self.Fractions = [1/3,1/3,1/3]
+        self.dim = 0
         self.Split = [0,0,0]
 
     def sqdist(self, x, y, c):
-        self.rescale_dims(x)
         hyper = self.Hyperboloid.sqdist(x[..., :self.Split[0]], y[..., :self.Split[0]], c)
         euc = self.Euclidean.sqdist(x[..., self.Split[0] : self.Split[1]], y[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.sqdist(x[..., self.Split[1] : self.Split[2]], x[..., self.Split[1] : self.Split[2]], c)
@@ -36,28 +35,24 @@ class Mixture(Manifold):
         return hyper.view(-1) + euc + poin
 
     def proj(self, x, c):
-        self.rescale_dims(x)
         hyper = self.Hyperboloid.proj(x[..., :self.Split[0]], c)
         euc = self.Euclidean.proj(x[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.proj(x[..., self.Split[1] : self.Split[2]], c)
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def proj_tan(self, u, x, c):
-        self.rescale_dims(x)
         hyper = self.Hyperboloid.proj_tan(u[..., :self.Split[0]], x[..., :self.Split[0]], c)
         euc = self.Euclidean.proj_tan(u[..., self.Split[0] : self.Split[1]], x[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.proj_tan(u[..., self.Split[1] : self.Split[2]], x[..., self.Split[1] : self.Split[2]], c)
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def proj_tan0(self, u, c):
-        self.rescale_dims(u)
         hyper = self.Hyperboloid.proj_tan0(u[..., :self.Split[0]], c)
         euc = self.Euclidean.proj_tan0(u[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.proj_tan0(u[..., self.Split[1] : self.Split[2]], c)
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def expmap(self, u, x, c):
-        self.rescale_dims(x)
         hyper = self.Hyperboloid.expmap(u[..., :self.Split[0]], x[..., :self.Split[0]], c)
         euc = self.Euclidean.expmap(u[..., self.Split[0] : self.Split[1]], x[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.expmap(u[..., self.Split[1] : self.Split[2]], x[..., self.Split[1] : self.Split[2]], c)
@@ -65,35 +60,30 @@ class Mixture(Manifold):
 
 
     def logmap(self, x, y, c):
-        self.rescale_dims(x)
         hyper = self.Hyperboloid.logmap(x[..., :self.Split[0]], y[..., :self.Split[0]], c)
         euc = self.Euclidean.logmap(x[..., self.Split[0] : self.Split[1]], y[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.logmap(x[..., self.Split[1] : self.Split[2]], y[..., self.Split[1] : self.Split[2]], c)
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def expmap0(self, u, c):
-        self.rescale_dims(u)
         hyper = self.Hyperboloid.expmap0(u[..., :self.Split[0]], c)
         euc = self.Euclidean.expmap0(u[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.expmap0(u[..., self.Split[1] : self.Split[2]], c)
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def logmap0(self, x, c):
-        self.rescale_dims(x)
         hyper = self.Hyperboloid.logmap0(x[..., :self.Split[0]], c)
         euc = self.Euclidean.logmap0(x[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.logmap0(x[..., self.Split[1] : self.Split[2]], c)
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def mobius_add(self, x, y, c):
-        self.rescale_dims(x)
         hyper = self.Hyperboloid.mobius_add(x[..., :self.Split[0]], y[..., :self.Split[0]], c)
         euc = self.Euclidean.mobius_add(x[..., self.Split[0] : self.Split[1]], y[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.mobius_add(x[..., self.Split[1] : self.Split[2]], y[..., self.Split[1] : self.Split[2]], c)
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def mobius_matvec(self, m, x, c):
-        self.rescale_dims(x)
         'Seperate out Manifolds, project:'
 
         'hyperboloid'
@@ -142,30 +132,20 @@ class Mixture(Manifold):
         # # print(poin.shape)
         # return torch.cat([hyper, euc, poin], dim = 1)
 
-
-    def rescale_dims(self, x):
-        length = len(x[0,:])
-        if length != self.length:
-            self.Split[0] = int(self.Fractions[0] * length)
-            self.Split[1] = int(self.Fractions[1] * length) + self.Split[0]
-            self.Split[2] = length
-            self.length = length
-
-
-
-
-
+    def rescale_dims(self):
+        length = self.dim
+        self.Split[0] = int(self.Fractions[0] * length)
+        self.Split[1] = int(self.Fractions[1] * length) + self.Split[0]
+        self.Split[2] = length
 
 
     def ptransp(self, x, y, u, c):
-        self.rescale_dims(x)
         hyper = self.Hyperboloid.ptransp(x[..., :self.Split[0]], y[..., :self.Split[0]], u[..., :self.Split[0]], c)
         euc = self.Euclidean.ptransp(x[..., self.Split[0] : self.Split[1]], y[..., self.Split[0] : self.Split[1]], u[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.ptransp(x[..., self.Split[1] : self.Split[2]], y[..., self.Split[1] : self.Split[2]], u[..., self.Split[1] : self.Split[2]], c)
         return torch.cat([hyper, euc, poin], dim = 1)
 
     def ptransp0(self, x, u, c):
-        self.rescale_dims(x)
         hyper = self.Hyperboloid.ptransp0(x[..., :self.Split[0]], u[..., :self.Split[0]], c)
         euc = self.Euclidean.ptransp0(x[..., self.Split[0] : self.Split[1]], u[..., self.Split[0] : self.Split[1]], c)
         poin = self.Poincare.ptransp0(x[..., self.Split[1] : self.Split[2]], u[..., self.Split[1] : self.Split[2]], c)
@@ -173,7 +153,6 @@ class Mixture(Manifold):
 
 
     def normalize(self, p):
-        self.rescale_dims(p)
         return torch.cat([p[...,:self.Split[0]], self.Euclidean.normalize(p[...,self.Split[0]:self.Split[1]]), p[...,self.Split[1]:self.Split[2]]], dim=1)
 
     # def to_poincare(self, x, c):

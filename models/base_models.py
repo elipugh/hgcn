@@ -33,6 +33,8 @@ class BaseModel(nn.Module):
             args.feat_dim = args.feat_dim + 1
         if (self.manifold.name == 'Mixture'):
             self.manifold.Fractions = args.mixed_frac
+            self.manifold.dim = args.feat_dim
+            self.manifold.rescale_dims()
         self.nnodes = args.n_nodes
         self.encoder = getattr(encoders, args.model)(self.c, args)
 
