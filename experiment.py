@@ -26,7 +26,7 @@ from copy import deepcopy
 def get_args(model, manifold, dim, dataset, log_freq,
              cuda, lr, n_layers, act, bias, dropout,
              weight_decay, c, normalize_feats, task,
-             mixed_fractions):
+             mixed_fractions, lr_reduce_freq):
     cfg = deepcopy(config_args)
 
     cfg['model_config']['model'] = (model,"")
@@ -45,6 +45,7 @@ def get_args(model, manifold, dim, dataset, log_freq,
     cfg['training_config']['cuda'] = (cuda,"")
     cfg['training_config']['log-freq'] = (log_freq,"")
     cfg['training_config']['lr'] = (lr,"")
+    cfg['training_config']['lr-reduce-freq'] = (lr_reduce_freq,"")
     cfg['training_config']['dropout'] = (float(dropout),"")
     cfg['training_config']['weight-decay'] = (float(weight_decay),"")
 
@@ -62,12 +63,12 @@ def get_args(model, manifold, dim, dataset, log_freq,
 def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
                    lr=0.01, n_layers=2, act="relu", bias=1, dropout=0.5,
                    weight_decay=0.001, c=None, normalize_feats=1, task="lp",
-                   mixed_fractions=[1/3,1/3,1/3]):
+                   mixed_fractions=[1/3,1/3,1/3], lr_reduce_freq=None):
 
     args = get_args(model, manifold, dim, dataset, log_freq,
                    cuda, lr, n_layers, act, bias, dropout,
                    weight_decay, c, normalize_feats, task,
-                   mixed_fractions)
+                   mixed_fractions, lr_reduce_freq)
 
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
