@@ -368,6 +368,10 @@ class Mixture(Manifold):
             return torch.cat([hyper, euc], dim = 1)
         return torch.cat([hyper, euc, poin], dim = 1)
 
+    
+    def init_weights(self, w, c, irange=1e-5):
+        w.data.uniform_(-irange, irange)
+        return w
     # def to_poincare(self, x, c):
     #     K = 1. / c
     #     sqrtK = K ** 0.5
