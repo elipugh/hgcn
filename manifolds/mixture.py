@@ -244,6 +244,12 @@ class Mixture(Manifold):
         else:
             accumulated_u = x
             print("Not Hyper", accumulated_u.shape)
+            
+        if self.Fractions[2] != 0:
+            'poincare'
+            sqrt_c = c ** 0.5
+            poinc_x_norm = x[..., self.Split[1] : self.Split[2]].norm(dim=-1, keepdim=True, p=2).clamp_min(self.min_norm)
+
 
         'multiply'
         mu = accumulated_u @ m.transpose(-1, -2)
@@ -255,13 +261,9 @@ class Mixture(Manifold):
         'hyperboloid'
         if self.Fractions[0] != 0:
             hyper_final = self.Hyperboloid.expmap0(mu[..., :self.Split[0]], c)
-
         if self.Fractions[2] != 0:
-            'poincare'
-            sqrt_c = c ** 0.5
-            poinc_x_norm = x[..., self.Split[1] : self.Split[2]].norm(dim=-1, keepdim=True, p=2).clamp_min(self.min_norm)
             poinc_mx_norm = mu[..., self.Split[1] : self.Split[2]].norm(dim=-1, keepdim=True, p=2).clamp_min(self.min_norm)
-            res_c = tanh(poinc_x_norm / poinc_x_norm * artanh(sqrt_c * poinc_x_norm)) * mu[..., self.Split[1] : self.Split[2]] / (poinc_x_norm * sqrt_c)
+            res_c = tanh(poinc_mx_norm / poinc_x_norm * artanh(sqrt_c * poinc_x_norm)) * mu[..., self.Split[1] : self.Split[2]] / (poinc_mx_norm * sqrt_c)
             cond = (mu[..., self.Split[1] : self.Split[2]] == 0).prod(-1, keepdim=True, dtype=torch.uint8)
             res_0 = torch.zeros(1, dtype=res_c.dtype, device=res_c.device)
             poincare_final = torch.where(cond, res_0, res_c)
