@@ -83,6 +83,8 @@ class HypLinear(nn.Module):
     def __init__(self, manifold, in_features, out_features, c, dropout, use_bias):
         super(HypLinear, self).__init__()
         self.manifold = manifold
+        if (self.manifold.name == 'Mixture'):
+            self.manifold.Fractions = args.mixed_frac
         self.in_features = in_features
         self.out_features = out_features
         self.c = c
