@@ -56,6 +56,8 @@ class LinearDecoder(Decoder):
     def __init__(self, c, args):
         super(LinearDecoder, self).__init__(c)
         self.manifold = getattr(manifolds, args.manifold)()
+        if (self.manifold.name == 'Mixture'):
+            self.manifold.Fractions = args.mixed_frac
         self.input_dim = args.dim
         self.output_dim = args.n_classes
         self.bias = args.bias
