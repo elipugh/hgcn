@@ -224,6 +224,75 @@ class Mixture(Manifold):
             return torch.cat([hyper, euc], dim = 1)
         return torch.cat([hyper, euc, poin], dim = 1)
 
+    def old_mobius_matvec1(self,m,x,c):
+        return self.expmap0( self.logmap0(x,c) @ m.transpose(-2,-1), c )
+
+    def old_mobius_matvec2(self,m,x,c):
+        self.rescale_dims(x)
+        add = None
+        if self.Fractions[0] != 0:
+            hmu = self.Hyperboloid.mobius_matvec(
+              m[:,:self.Split[0]],
+              x[:,:self.Split[0]],
+              c
+            )
+            add = hmu
+        if self.Fractions[1] != 0:
+            emu = self.Euclidean.mobius_matvec(
+              m[:,self.Split[0]:self.Split[1]],
+              x[:,self.Split[0]:self.Split[1]],
+              c
+            )
+            if add is None:
+                add = emu
+            else:
+                add = self.mobius_add(add,emu,c)
+        if self.Fractions[2] != 0:
+            pmu = self.Poincare.mobius_matvec(
+              m[:,self.Split[1]:self.Split[2]],
+              x[:,self.Split[1]:self.Split[2]],
+              c
+            )
+            if add is None:
+                add = pmu
+            else:
+                add = self.mobius_add(add,pmu,c)
+        return add
+
+    def old_mobius_matvec3(self,m,x,c):
+        add = None
+        if self.Fractions[0] != 0:
+            self.rescale_dims(x)
+            m1 = m[:,:self.Split[0]]
+            x1 = x[:,:self.Split[0]]
+            self.rescale_dims(m1.transpose(-2,-1))
+            m1 = m1[:self.Split[0]]
+            hmu = self.Hyperboloid.mobius_matvec(m1, x1, c)
+            add = hmu
+        if self.Fractions[1] != 0:
+            self.rescale_dims(x)
+            m2 = m[:,self.Split[0]:self.Split[1]]
+            x2 = x[:,self.Split[0]:self.Split[1]]
+            self.rescale_dims(m2.transpose(-2,-1))
+            m2 = m2[self.Split[0]:self.Split[1]]
+            emu = self.Euclidean.mobius_matvec(m2, x2, c)
+            if add is None:
+              add = emu
+            else:
+              add = torch.cat([add,emu], dim=1)
+        if self.Fractions[2] != 0:
+            self.rescale_dims(x)
+            m3 = m[:,self.Split[1]:self.Split[2]]
+            x3 = x[:,self.Split[1]:self.Split[2]]
+            self.rescale_dims(m3.transpose(-2,-1))
+            m3 = m3[self.Split[1]:self.Split[2]]
+            pmu = self.Poincare.mobius_matvec(m3, x3, c)
+            if add is None:
+              add = pmu
+            else:
+              add = torch.cat([add,pmu], dim=1)
+        return add
+
     def mobius_matvec(self, m, x, c):
         if (self.Fractions[1]==0) and (self.Fractions[2]==0):
             return self.Hyperboloid.mobius_matvec(m, x, c)
@@ -235,94 +304,44 @@ class Mixture(Manifold):
         self.rescale_dims(x)
         'Seperate out Manifolds, project:'
 
-        add = None
+        'hyperboloid'
         if self.Fractions[0] != 0:
-            hmu = self.Hyperboloid.mobius_matvec(
-              m[:,:self.Split[0]],
-              x[:,:self.Split[0]],
-              c
-            )
-            add = hmu
-
-        if self.Fractions[1] != 0:
-            emu = self.Euclidean.mobius_matvec(
-              m[:,self.Split[0]:self.Split[1]],
-              x[:,self.Split[0]:self.Split[1]],
-              c
-            )
-            if add is None:
-                add = emu
-            else:
-                add = self.mobius_add(add,emu,c)
-
-        if self.Fractions[2] != 0:
-            pmu = self.Poincare.mobius_matvec(
-              m[:,self.Split[1]:self.Split[2]],
-              x[:,self.Split[1]:self.Split[2]],
-              c
-            )
-            if add is None:
-                add = pmu
-            else:
-                add = self.mobius_add(add,pmu,c)
-
-        return add
-
-        # 'hyperboloid'
-        # if self.Fractions[0] != 0:
-        #     hyper_u = self.Hyperboloid.logmap0(x[..., :self.Split[0]], c)
-        #     'accumulate'
-        #     accumulated_u = torch.cat([hyper_u, x[..., self.Split[0] : self.Split[2]]], dim=1)
-        # else:
-        #     accumulated_u = x
+            hyper_u = self.Hyperboloid.logmap0(x[..., :self.Split[0]], c)
+            'accumulate'
+            accumulated_u = torch.cat([hyper_u, x[..., self.Split[0] : self.Split[2]]], dim=1)
+        else:
+            accumulated_u = x
             
-        # if self.Fractions[2] != 0:
-        #     'poincare'
-        #     sqrt_c = c ** 0.5
-        #     poinc_x_norm = x[..., self.Split[1] : self.Split[2]].norm(dim=-1, keepdim=True, p=2).clamp_min(self.min_norm)
+        if self.Fractions[2] != 0:
+            'poincare'
+            sqrt_c = c ** 0.5
+            poinc_x_norm = x[..., self.Split[1] : self.Split[2]].norm(dim=-1, keepdim=True, p=2).clamp_min(self.min_norm)
 
+        'multiply'
+        mu = accumulated_u @ m.transpose(-1, -2)
+        self.rescale_dims(mu)
 
-        # 'multiply'
-        # mu = accumulated_u @ m.transpose(-1, -2)
-        # self.rescale_dims(mu)
+        'hyperboloid'
+        if self.Fractions[0] != 0:
+            hyper_final = self.Hyperboloid.expmap0(mu[..., :self.Split[0]], c)
+        if self.Fractions[2] != 0:
+            poinc_mx_norm = mu[..., self.Split[1] : self.Split[2]].norm(dim=-1, keepdim=True, p=2).clamp_min(self.min_norm)
+            res_c = tanh(poinc_mx_norm / poinc_x_norm * artanh(sqrt_c * poinc_x_norm)) * mu[..., self.Split[1] : self.Split[2]] / (poinc_mx_norm * sqrt_c)
+            cond = (mu[..., self.Split[1] : self.Split[2]] == 0).prod(-1, keepdim=True, dtype=torch.uint8)
+            res_0 = torch.zeros(1, dtype=res_c.dtype, device=res_c.device)
+            poincare_final = torch.where(cond, res_0, res_c)
 
+        if self.Fractions[0] == 0:
+            new_mu = torch.cat([mu[...,self.Split[0] : self.Split[1]], poincare_final], dim=1)
+        elif self.Fractions[1] == 0:
+            new_mu = torch.cat([hyper_final, poincare_final], dim=1)
+        elif self.Fractions[2] == 0:
+            new_mu = torch.cat([hyper_final, mu[...,self.Split[0] : self.Split[1]]], dim=1)
+        else:
+            new_mu = torch.cat([hyper_final, mu[...,self.Split[0] : self.Split[1]], poincare_final], dim=1)
 
-        # 'now unscrew the vector'
+        return new_mu
 
-        # 'hyperboloid'
-        # if self.Fractions[0] != 0:
-        #     hyper_final = self.Hyperboloid.expmap0(mu[..., :self.Split[0]], c)
-        # if self.Fractions[2] != 0:
-        #     poinc_mx_norm = mu[..., self.Split[1] : self.Split[2]].norm(dim=-1, keepdim=True, p=2).clamp_min(self.min_norm)
-        #     res_c = tanh(poinc_mx_norm / poinc_x_norm * artanh(sqrt_c * poinc_x_norm)) * mu[..., self.Split[1] : self.Split[2]] / (poinc_mx_norm * sqrt_c)
-        #     cond = (mu[..., self.Split[1] : self.Split[2]] == 0).prod(-1, keepdim=True, dtype=torch.uint8)
-        #     res_0 = torch.zeros(1, dtype=res_c.dtype, device=res_c.device)
-        #     poincare_final = torch.where(cond, res_0, res_c)
-
-        # if self.Fractions[0] == 0:
-        #     new_mu = torch.cat([mu[...,self.Split[0] : self.Split[1]], poincare_final], dim=1)
-        # elif self.Fractions[1] == 0:
-        #     new_mu = torch.cat([hyper_final, poincare_final], dim=1)
-        # elif self.Fractions[2] == 0:
-        #     new_mu = torch.cat([hyper_final, mu[...,self.Split[0] : self.Split[1]]], dim=1)
-        # else:
-        #     new_mu = torch.cat([hyper_final, mu[...,self.Split[0] : self.Split[1]], poincare_final], dim=1)
-
-        # return new_mu
-
-        # mu = u @ m.transpose(-1, -2)
-        #
-        #
-        #
-        #
-        # hyper = self.Hyperboloid.mobius_matvec(m[ :self.Split[0], :], x[..., :self.Split[0]], c)
-        # euc = self.Euclidean.mobius_matvec(m[ self.Split[0] : self.Split[1], :], x[..., self.Split[0] : self.Split[1]], c)
-        # poin = self.Poincare.mobius_matvec(m[ self.Split[1] : self.Split[2], :], x[..., self.Split[1] : self.Split[2]], c)
-        #
-        # # print(hyper.shape)
-        # # print(euc.shape)
-        # # print(poin.shape)
-        # return torch.cat([hyper, euc, poin], dim = 1)
 
     def rescale_dims(self, x):
         length = len(x[0,:])
