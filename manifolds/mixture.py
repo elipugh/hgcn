@@ -262,9 +262,9 @@ class Mixture(Manifold):
               c
             )
             if add is None:
-                add = emu
+                add = pmu
             else:
-                add = self.mobius_add(add,emu,c)
+                add = self.mobius_add(add,pmu,c)
 
         return add
 
