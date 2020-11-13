@@ -266,9 +266,9 @@ class Mixture(Manifold):
 
         if self.Fractions[0] == 0:
             new_mu = torch.cat([mu[...,self.Split[0] : self.Split[1]], poincare_final], dim=1)
-        if self.Fractions[1] == 0:
+        elif self.Fractions[1] == 0:
             new_mu = torch.cat([hyper_final, poincare_final], dim=1)
-        if self.Fractions[2] == 0:
+        elif self.Fractions[2] == 0:
             new_mu = torch.cat([hyper_final, mu[...,self.Split[0] : self.Split[1]]], dim=1)
         else:
             new_mu = torch.cat([hyper_final, mu[...,self.Split[0] : self.Split[1]], poincare_final], dim=1)
