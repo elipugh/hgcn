@@ -44,7 +44,7 @@ def get_args(model, manifold, dim, dataset, log_freq,
         cfg['model_config']['mixed_frac'] = ([0,0,1], "")
     else:
         cfg['model_config']['mixed_frac'] = (mixed_fractions, "")
-        cfg['data_config']['normalize_feats'] = (1, "")
+        cfg['data_config']['normalize_feats'] = (0, "")
     if c is not None:
         cfg['model_config']['c'] = (float(c),"")
     else:
@@ -82,7 +82,7 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
                    lr=0.01, n_layers=2, act="relu", bias=1, dropout=0.5,
                    weight_decay=0.001, c=None, normalize_feats=1, task="lp",
                    mixed_fractions=[1/3,1/3,1/3], lr_reduce_freq=None,
-                   clipping=0):
+                   clipping=None):
     args = get_args(model, manifold, dim, dataset, log_freq,
                    cuda, lr, n_layers, act, bias, dropout,
                    weight_decay, c, normalize_feats, task,
