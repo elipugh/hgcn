@@ -44,7 +44,6 @@ def get_args(model, manifold, dim, dataset, log_freq,
         cfg['model_config']['mixed_frac'] = ([0,0,1], "")
     else:
         cfg['model_config']['mixed_frac'] = (mixed_fractions, "")
-        cfg['data_config']['normalize_feats'] = (0, "")
     if c is not None:
         cfg['model_config']['c'] = (float(c),"")
     else:
