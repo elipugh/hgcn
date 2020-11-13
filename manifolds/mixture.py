@@ -247,7 +247,7 @@ class Mixture(Manifold):
             'poincare'
             sqrt_c = c ** 0.5
             poinc_x_norm = x[..., self.Split[1] : self.Split[2]].norm(dim=-1, keepdim=True, p=2).clamp_min(self.min_norm)
-            accumulated_u = torch.cat(accumulated_u[..., :self.Split[1], poinc_x_norm], dim=1)
+            accumulated_u = torch.cat([accumulated_u[..., :self.Split[1]], poinc_x_norm], dim=1)
 
 
         'multiply'
