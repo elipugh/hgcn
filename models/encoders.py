@@ -55,6 +55,8 @@ class HNN(Encoder):
     def __init__(self, c, args):
         super(HNN, self).__init__(c)
         self.manifold = getattr(manifolds, args.manifold)()
+        if (self.manifold.name == 'Mixture'):
+            self.manifold.Fractions = args.mixed_frac
         assert args.num_layers > 1
         dims, acts, _ = hyp_layers.get_dim_act_curv(args)
         hnn_layers = []
@@ -98,6 +100,8 @@ class HGCN(Encoder):
     def __init__(self, c, args):
         super(HGCN, self).__init__(c)
         self.manifold = getattr(manifolds, args.manifold)()
+        if (self.manifold.name == 'Mixture'):
+            self.manifold.Fractions = args.mixed_frac
         assert args.num_layers > 1
         dims, acts, self.curvatures = hyp_layers.get_dim_act_curv(args)
         self.curvatures.append(self.c)
@@ -152,6 +156,8 @@ class Shallow(Encoder):
     def __init__(self, c, args):
         super(Shallow, self).__init__(c)
         self.manifold = getattr(manifolds, args.manifold)()
+        if (self.manifold.name == 'Mixture'):
+            self.manifold.Fractions = args.mixed_frac
         self.use_feats = args.use_feats
         weights = torch.Tensor(args.n_nodes, args.dim)
         if not args.pretrained_embeddings:

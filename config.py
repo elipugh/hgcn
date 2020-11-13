@@ -7,7 +7,7 @@ config_args = {
         'lr': (0.01, 'learning rate'),
         'dropout': (0.0, 'dropout probability'),
         'cuda': (-1, 'which cuda device to use (-1 for cpu training)'),
-        'epochs': (5000, 'maximum number of epochs to train for'),
+        'epochs': (800, 'maximum number of epochs to train for'),
         'weight-decay': (0., 'l2 regularization strength'),
         'optimizer': ('Adam', 'which optimizer to use, can be any of [Adam, RiemannianAdam]'),
         'momentum': (0.999, 'momentum in optimizer'),
