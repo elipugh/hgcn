@@ -237,9 +237,9 @@ class Mixture(Manifold):
 
         add = None
         if self.Fractions[0] != 0:
-            hmu = self.Euclidean.mobius_matvec(
-              m[:,self.Split[0]:self.Split[1]],
-              x[:,self.Split[0]:self.Split[1]],
+            hmu = self.Hyperboloid.mobius_matvec(
+              m[:,:self.Split[0]],
+              x[:,:self.Split[0]],
               c
             )
             add = hmu
