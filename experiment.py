@@ -7,6 +7,7 @@ import logging
 import os
 import pickle
 import time
+from sys.stdout import flush
 
 import numpy as np
 import optimizers
@@ -17,7 +18,6 @@ from utils.data_utils import load_data
 from utils.train_utils import get_dir_name, format_metrics
 
 from config import config_args
-from train import train
 import argparse
 from utils.train_utils import add_flags_from_config
 from copy import deepcopy
@@ -251,6 +251,7 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
         torch.save(model.state_dict(), os.path.join(save_dir, 'model.pth'))
         logging.info(f"Saved model in {save_dir}")
     logging.shutdown()
+    flush()
     print("\n")
     return history
 
