@@ -7,7 +7,7 @@ import logging
 import os
 import pickle
 import time
-from sys.stdout import flush
+import sys
 
 import numpy as np
 import optimizers
@@ -251,7 +251,7 @@ def run_experiment(model, manifold, dim, dataset="cora", log_freq=5, cuda=-1,
         torch.save(model.state_dict(), os.path.join(save_dir, 'model.pth'))
         logging.info(f"Saved model in {save_dir}")
     logging.shutdown()
-    flush()
+    sys.stdout.flush()
     print("\n")
     return history
 
