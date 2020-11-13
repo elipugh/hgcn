@@ -242,6 +242,12 @@ class Mixture(Manifold):
             accumulated_u = torch.cat([hyper_u, x[..., self.Split[0] : self.Split[2]]], dim=1)
         else:
             accumulated_u = x
+            
+        if self.Fractions[2] != 0:
+            'poincare'
+            sqrt_c = c ** 0.5
+            poinc_x_norm = x[..., self.Split[1] : self.Split[2]].norm(dim=-1, keepdim=True, p=2).clamp_min(self.min_norm)
+
 
         'multiply'
         mu = accumulated_u @ m.transpose(-1, -2)
@@ -253,11 +259,7 @@ class Mixture(Manifold):
         'hyperboloid'
         if self.Fractions[0] != 0:
             hyper_final = self.Hyperboloid.expmap0(mu[..., :self.Split[0]], c)
-
         if self.Fractions[2] != 0:
-            'poincare'
-            sqrt_c = c ** 0.5
-            poinc_x_norm = x[..., self.Split[1] : self.Split[2]].norm(dim=-1, keepdim=True, p=2).clamp_min(self.min_norm)
             poinc_mx_norm = mu[..., self.Split[1] : self.Split[2]].norm(dim=-1, keepdim=True, p=2).clamp_min(self.min_norm)
             res_c = tanh(poinc_mx_norm / poinc_x_norm * artanh(sqrt_c * poinc_x_norm)) * mu[..., self.Split[1] : self.Split[2]] / (poinc_mx_norm * sqrt_c)
             cond = (mu[..., self.Split[1] : self.Split[2]] == 0).prod(-1, keepdim=True, dtype=torch.uint8)
