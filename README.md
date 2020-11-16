@@ -5,7 +5,7 @@ This repository is a fork of [https://github.com/HazyResearch/hgcn](https://gith
 
 We use their implementation of Hyperbolic Graph Convolutions [[1]](http://web.stanford.edu/~chami/files/hgcn.pdf) in PyTorch to examine how embedding on different manifolds can impact performance on link prediction and also node classification.
 
-See examples in [this Colab](https://colab.research.google.com/drive/1BGm__vnNnfMB2k6nxtao8mHWrul4t43G?usp=sharing).
+See examples in [this Colab](https://colab.research.google.com/drive/1BGm__vnNnfMB2k6nxtao8mHWrul4t43G?usp=sharing)!  Also check out our [final paper](google.com)
 
 This is also a class project for [CS468](http://graphics.stanford.edu/courses/cs468-20-fall/) at Stanford.
 
